@@ -1,0 +1,167 @@
+openapi: '3.0.2'
+
+info:
+  title: Eventful Clinic
+  description: Eventful Clinic API
+  version: '1.0'
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Patients
+    description: Manage patients
+
+paths:
+  /patients:
+    post:
+      operationId: admitPatient
+      summary: Admit a patient
+      tags:
+        - Patients
+      requestBody:
+        description: "Patient details"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdmitPatient'
+            examples:
+              john:
+                summary: An example patient
+                value:
+                    patient_name: John Doe
+                    ward_number: 606B
+                    patient_age: 25
+              jane:
+                summary: Another example patient
+                value:
+                    patient_name: Jane Doe
+                    ward_number: 606C
+                    patient_age: 30
+
+      responses:
+        '200':
+          description: Patient Admitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdmittedPatient'
+        '400':
+          $ref: '#/components/responses/default'
+        '500':
+          $ref: '#/components/responses/default'
+
+  /patients/{id}/transfer:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Patient ID
+        schema:
+            type: string
+    post:
+      operationId: transferPatient
+      summary: Transfer patient to another ward
+      tags:
+        - Patients
+      requestBody:
+        description: "Ward details"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferPatient'
+            examples:
+              200C:
+                summary: Transfer to ward 200C
+                value:
+                    ward_number: 200C
+
+      responses:
+        '204':
+          description: Patient Admitted
+        '400':
+          $ref: '#/components/responses/default'
+        '500':
+          $ref: '#/components/responses/default'
+
+  /patients/{id}/discharge:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Patient ID
+        schema:
+          type: string
+    get:
+      operationId: dischargePatient
+      summary: Discharge a patient
+      tags:
+        - Patients
+
+      responses:
+        '204':
+          description: Patient Discharged
+        '400':
+          $ref: '#/components/responses/default'
+        '500':
+          $ref: '#/components/responses/default'
+
+components:
+  responses:
+    default:
+      description: An HTTP Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HttpError'
+  schemas:
+    HttpError:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        error:
+          type: string
+          format: string
+      required:
+        - "code"
+        - "error"
+
+    AdmitPatient:
+      type: object
+      properties:
+        patient_name:
+          type: string
+          format: string
+        ward_number:
+          type: string
+          format: string
+        patient_age:
+          type: number
+          format: number
+
+      required:
+        - "patient_name"
+        - "ward_number"
+        - "patient_age"
+
+    AdmittedPatient:
+      type: object
+      properties:
+        patient_id:
+          type: string
+          format: string
+      required:
+        - "patient_id"
+
+    TransferPatient:
+      type: object
+      properties:
+        new_ward_number:
+          type: string
+          format: string
+
+      required:
+        - "new_ward_number"
+

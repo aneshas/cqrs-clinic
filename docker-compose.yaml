@@ -1,0 +1,75 @@
+services:
+
+  app:
+    container_name: app
+    build:
+      context: ./
+    restart: always
+    environment:
+      DSN: "host=172.30.0.107 user=pg password=pg_pwd dbname=eventstore port=5432"
+      MIGRATION_DSN: "pgx5://pg:pg_pwd@172.30.0.107:5432/eventstore?sslmode=disable"
+      MIGRATION_SOURCE: "file:///usr/src/app/etc/migrations"
+    depends_on:
+      postgres:
+        condition: service_healthy
+#      mongo-projection:
+#        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --server-response --timeout=5 http://localhost:8080/health 2>&1 | grep 'OK'"]
+      timeout: 2s
+      interval: 60s
+      retries: 10
+      start_period: 20s
+      start_interval: 5s
+    ports:
+        - "8080:8080"
+    networks:
+      development:
+        ipv4_address: 172.30.0.106
+
+  postgres:
+    image: postgres:16.4
+    container_name: postgres-event-store
+    restart: always
+    volumes:
+      - ./data/postgres-event-store/pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pg
+      POSTGRES_DB: eventstore
+      POSTGRES_PASSWORD: pg_pwd
+    command: postgres -c wal_level=logical
+    healthcheck:
+      test: [ "CMD-SHELL", "PGPASSWORD=pg_pwd psql -U pg -d eventstore -h localhost -c 'SELECT 1;'" ]
+      timeout: 2s
+      interval: 60s
+      retries: 10
+      start_period: 20s
+      start_interval: 5s
+    expose:
+      - 5432
+    ports:
+        - "5435:5432"
+    networks:
+      development:
+        ipv4_address: 172.30.0.107
+
+  ambar-emulator:
+    image: ambarltd/emulator:v1.4
+    container_name: ambar-emulator
+    restart: always
+    volumes:
+      - ./etc/ambar-config.yaml:/opt/emulator/config/config.yaml
+      - ./data/ambar-emulator:/root/.local/share/ambar-emulator
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      development:
+        ipv4_address: 172.30.0.199
+
+networks:
+  development:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

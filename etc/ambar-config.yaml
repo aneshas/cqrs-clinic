@@ -1,0 +1,36 @@
+data_sources:
+
+  - id: postgres_source
+    description: Events Table in Postgres
+    type: postgres
+    host: 172.30.0.107
+    port: 5432
+    username: replication
+    password: repl-pass
+    database: eventstore
+    table: event
+    columns:
+      - id
+      - sequence
+      - type
+      - data
+      - meta
+      - causation_event_id
+      - correlation_event_id
+      - stream_id
+      - stream_version
+#      - occurred_on
+
+    serialColumn: sequence
+    partitioningColumn: stream_id # corelation_id
+
+data_destinations:
+
+  - id: Patient_Roster
+    description: Patient Roster
+    type: http-push
+    endpoint: http://172.30.0.106:8080/projections/patient_roster
+    username: username
+    password: password
+    sources:
+      - postgres_source
