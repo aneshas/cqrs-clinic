@@ -13,12 +13,16 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"log"
 	"os"
 )
 
 var pg = flag.Bool("pg", false, "Run with postgres db (set DSN env to pg connection string)")
 
+// @title Event-Sourced Clinic Example API
+// @version 1.0
+// @description This is an Event-Sourced Clinic example.
 func main() {
 	flag.Parse()
 
@@ -44,6 +48,11 @@ func main() {
 	e := echo.New()
 
 	e.HTTPErrorHandler = errs.ErrorHandler
+
+	e.Use(
+		middleware.Logger(),
+		middleware.Recover(),
+	)
 
 	patientStore := aggregate.NewStore[*patient.Patient](eventStore)
 

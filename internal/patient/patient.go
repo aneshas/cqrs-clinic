@@ -98,14 +98,15 @@ func (p *Patient) TransferTo(newWard string) error {
 }
 
 // Discharge discharges a patient
-func (p *Patient) Discharge() {
+func (p *Patient) Discharge(note string) {
 	if p.isDischarged {
 		return
 	}
 
 	p.Apply(
 		Discharged{
-			PatientID: p.ID.String(),
+			PatientID:     p.ID.String(),
+			DischargeNote: note,
 		},
 	)
 }

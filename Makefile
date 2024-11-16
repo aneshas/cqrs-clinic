@@ -4,7 +4,7 @@ swag:
 
 .PHONY: docs
 docs:
-	swag init -d ./cmd/instahelp,./internal/echohttp
+	swag init -d ./cmd/clinicapi,./internal/errs,./internal/api
 
 .PHONY: sql
 sql:

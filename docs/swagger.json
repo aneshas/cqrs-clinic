@@ -1,0 +1,207 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an Event-Sourced Clinic example.",
+        "title": "Event-Sourced Clinic Example API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/patients/admit": {
+            "post": {
+                "description": "admits a new patient.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Admit a new patient",
+                "parameters": [
+                    {
+                        "description": "Patient to admit",
+                        "name": "AdmitPatientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AdmitPatientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admitted patient",
+                        "schema": {
+                            "$ref": "#/definitions/AdmitPatientResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{id}/discharge": {
+            "post": {
+                "description": "discharges a patient.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Discharge a patient",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Patient Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Discharge request",
+                        "name": "DischargePatientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DischargePatientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{id}/transfer": {
+            "post": {
+                "description": "transfers patient to a new ward.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Transfer a patient",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Patient Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Transfer request",
+                        "name": "TransferPatientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/TransferPatientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AdmitPatientRequest": {
+            "description": "Patient to be admitted",
+            "type": "object",
+            "properties": {
+                "patient_age": {
+                    "type": "integer"
+                },
+                "patient_name": {
+                    "type": "string"
+                },
+                "ward_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "AdmitPatientResponse": {
+            "type": "object",
+            "properties": {
+                "patient_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "DischargePatientRequest": {
+            "type": "object",
+            "properties": {
+                "discharge_note": {
+                    "type": "string"
+                }
+            }
+        },
+        "HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {}
+            }
+        },
+        "TransferPatientRequest": {
+            "type": "object",
+            "properties": {
+                "new_ward_number": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

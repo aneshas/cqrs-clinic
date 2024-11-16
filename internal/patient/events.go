@@ -23,5 +23,6 @@ type Transferred struct {
 
 // Discharged event signals that a patient has been discharged
 type Discharged struct {
-	PatientID string
+	PatientID     string
+	DischargeNote string
 }
