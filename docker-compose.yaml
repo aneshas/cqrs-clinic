@@ -9,11 +9,14 @@ services:
       DSN: "host=172.30.0.107 user=pg password=pg_pwd dbname=eventstore port=5432"
       MIGRATION_DSN: "pgx5://pg:pg_pwd@172.30.0.107:5432/eventstore?sslmode=disable"
       MIGRATION_SOURCE: "file:///usr/src/app/etc/migrations"
+      MONGO_DSN: "mongodb://172.30.0.108:27017"
+      MONGO_USER: root
+      MONGO_PASS: root
     depends_on:
       postgres:
         condition: service_healthy
-#      mongo-projection:
-#        condition: service_healthy
+      mongo:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget --spider --server-response --timeout=5 http://localhost:8080/health 2>&1 | grep 'OK'"]
       timeout: 2s
@@ -52,6 +55,52 @@ services:
     networks:
       development:
         ipv4_address: 172.30.0.107
+
+  mongo:
+    image: mongo:7.0.14
+    container_name: mongo-query-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: admin
+      MONGO_REPLICA_SET_NAME: rs0
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - 'mongosh --username root --password root
+              --authenticationDatabase admin --host 172.30.0.108 --eval
+              "try { rs.status() } catch (err) { rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"172.30.0.108:27017\"}]})}"
+              | grep "votingMembersCount: 1"'
+      timeout: 2s
+      interval: 60s
+      retries: 10
+      start_period: 70s
+      start_interval: 3s
+    entrypoint:
+      - "sh"
+      - "-c"
+      - "[ ! -f /data/db/entrypoint-finished ] && (
+            timeout 40s /usr/local/bin/docker-entrypoint.sh mongod
+            || (
+              touch /data/db/entrypoint-finished &&
+              cp /keyfile/mongo.key /data/configdb/mongo.key && chmod 600 /data/configdb/mongo.key &&
+              mongod --replSet rs0 --bind_ip 172.30.0.108 --keyFile /data/configdb/mongo.key --auth
+            )
+          ) 
+          || (
+            cp /keyfile/mongo.key /data/configdb/mongo.key && chmod 600 /data/configdb/mongo.key &&
+            mongod --replSet rs0 --bind_ip 172.30.0.108 --keyFile /data/configdb/mongo.key --auth
+          )"
+    volumes:
+      - ./etc/mongo.key:/keyfile/mongo.key:ro
+      - ./data/mongo-query-db/db-data:/data/db
+      - ./data/mongo-query-db/db-config:/data/configdb
+    expose:
+      - 27017
+    networks:
+      development:
+        ipv4_address: 172.30.0.108
 
   ambar-emulator:
     image: ambarltd/emulator:v1.4

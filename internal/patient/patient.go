@@ -103,6 +103,10 @@ func (p *Patient) Discharge(note string) {
 		return
 	}
 
+	if note == "" {
+		note = "None Specified"
+	}
+
 	p.Apply(
 		Discharged{
 			PatientID:     p.ID.String(),

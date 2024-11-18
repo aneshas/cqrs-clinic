@@ -22,7 +22,7 @@ data_sources:
 #      - occurred_on
 
     serialColumn: sequence
-    partitioningColumn: stream_id # corelation_id
+    partitioningColumn: correlation_event_id
 
 data_destinations:
 

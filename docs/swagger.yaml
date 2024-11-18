@@ -19,11 +19,26 @@ definitions:
       discharge_note:
         type: string
     type: object
-  HTTPError:
+  HttpError:
     properties:
       code:
         type: integer
       error: {}
+    type: object
+  Patient:
+    properties:
+      age:
+        type: integer
+      discharge_note:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      ward_number:
+        type: string
     type: object
   TransferPatientRequest:
     properties:
@@ -36,6 +51,31 @@ info:
   title: Event-Sourced Clinic Example API
   version: "1.0"
 paths:
+  /patients:
+    get:
+      consumes:
+      - application/json
+      description: Get all patients.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All patients
+          schema:
+            items:
+              $ref: '#/definitions/Patient'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/HttpError'
+      summary: Get patient roster
+      tags:
+      - Patients
   /patients/{id}/discharge:
     post:
       consumes:
@@ -61,11 +101,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
       summary: Discharge a patient
       tags:
       - Patients
@@ -94,11 +134,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
       summary: Transfer a patient
       tags:
       - Patients
@@ -124,11 +164,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/HttpError'
       summary: Admit a new patient
       tags:
       - Patients

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"github.com/aneshas/clinic/internal/api"
@@ -14,6 +15,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
 )
@@ -54,7 +57,23 @@ func main() {
 		middleware.Recover(),
 	)
 
+	ctx := context.Background()
+
 	patientStore := aggregate.NewStore[*patient.Patient](eventStore)
+
+	clientOpts := options.Client().
+		ApplyURI(os.Getenv("MONGO_DSN")).
+		SetAuth(options.Credential{
+			Username: os.Getenv("MONGO_USER"),
+			Password: os.Getenv("MONGO_PASS"),
+		})
+
+	client, err := mongo.Connect(ctx, clientOpts)
+	checkErr(err)
+
+	defer func() {
+		_ = client.Disconnect(context.TODO())
+	}()
 
 	api.RegisterPatientServer(
 		e,
@@ -65,8 +84,10 @@ func main() {
 
 	api.RegisterProjectionServer(
 		e,
-		app.NewPatientRosterProjection(),
+		app.NewPatientRosterProjection(client),
 	)
+
+	api.RegisterPatientQueryServer(e, client)
 
 	log.Fatal(e.Start(":8080"))
 }

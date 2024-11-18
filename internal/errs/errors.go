@@ -10,7 +10,7 @@ import (
 type httpError struct {
 	Code  int `json:"code"`
 	Error any `json:"error"`
-} // @name HTTPError
+} // @name HttpError
 
 // ErrorHandler handles application errors
 func ErrorHandler(err error, c echo.Context) {

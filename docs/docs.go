@@ -15,6 +15,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/patients": {
+            "get": {
+                "description": "Get all patients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get patient roster",
+                "responses": {
+                    "200": {
+                        "description": "All patients",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Patient"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/patients/admit": {
             "post": {
                 "description": "admits a new patient.",
@@ -49,13 +87,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     }
                 }
@@ -99,13 +137,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     }
                 }
@@ -149,13 +187,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/HTTPError"
+                            "$ref": "#/definitions/HttpError"
                         }
                     }
                 }
@@ -194,13 +232,36 @@ const docTemplate = `{
                 }
             }
         },
-        "HTTPError": {
+        "HttpError": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "error": {}
+            }
+        },
+        "Patient": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "discharge_note": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "ward_number": {
+                    "type": "string"
+                }
             }
         },
         "TransferPatientRequest": {

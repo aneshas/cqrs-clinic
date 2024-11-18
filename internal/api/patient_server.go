@@ -61,8 +61,8 @@ type admitPatientResponse struct {
 // @Produce json
 // @Param AdmitPatientRequest body AdmitPatientRequest true "Patient to admit"
 // @Success 200 {object} AdmitPatientResponse "Admitted patient"
-// @Failure 400 {object} HTTPError
-// @Failure 500 {object} HTTPError
+// @Failure 400 {object} HttpError
+// @Failure 500 {object} HttpError
 // @Router /patients/admit [post]
 func (s *PatientServer) admitPatientHandler(c echo.Context) error {
 	var req admitPatientRequest
@@ -104,8 +104,8 @@ type transferPatientRequest struct {
 // @Param id path string true "Patient Id"
 // @Param TransferPatientRequest body TransferPatientRequest true "Transfer request"
 // @Success 204
-// @Failure 400 {object} HTTPError
-// @Failure 500 {object} HTTPError
+// @Failure 400 {object} HttpError
+// @Failure 500 {object} HttpError
 // @Router /patients/{id}/transfer [post]
 func (s *PatientServer) transferPatientHandler(c echo.Context) error {
 	var req transferPatientRequest
@@ -141,8 +141,8 @@ type dischargePatientRequest struct {
 // @Param id path string true "Patient Id"
 // @Param DischargePatientRequest body DischargePatientRequest true "Discharge request"
 // @Success 204
-// @Failure 400 {object} HTTPError
-// @Failure 500 {object} HTTPError
+// @Failure 400 {object} HttpError
+// @Failure 500 {object} HttpError
 // @Router /patients/{id}/discharge [post]
 func (s *PatientServer) dischargePatientHandler(c echo.Context) error {
 	var req dischargePatientRequest
