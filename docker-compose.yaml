@@ -103,7 +103,7 @@ services:
         ipv4_address: 172.30.0.108
 
   ambar-emulator:
-    image: ambarltd/emulator:v1.4
+    image: ambarltd/emulator:v1.5
     container_name: ambar-emulator
     restart: always
     volumes:

@@ -18,6 +18,16 @@ var PatientRosterSubscriptions = []any{
 	patient.Discharged{},
 }
 
+// Patient represents a patient
+type Patient struct {
+	ID            string  `bson:"patient_id" json:"id"`
+	Name          string  `bson:"patient_name" json:"name"`
+	WardNumber    string  `bson:"ward_number" json:"ward_number"`
+	Age           int     `bson:"patient_age" json:"age"`
+	Status        string  `bson:"status" json:"status"`
+	DischargeNote *string `bson:"discharge_note" json:"discharge_note,omitempty"`
+} // @name Patient
+
 // NewPatientRosterProjection creates a new patient roster projection
 func NewPatientRosterProjection(client *mongo.Client) ambar.Projection {
 	ctx := context.Background()
@@ -30,12 +40,12 @@ func NewPatientRosterProjection(client *mongo.Client) ambar.Projection {
 
 			fmt.Printf("Patient: #%s | Admitted to ward: <%s>\n", evt.PatientID, evt.WardNumber)
 
-			_, err := coll.InsertOne(ctx, bson.D{
-				{"patient_id", evt.PatientID},
-				{"patient_name", evt.PatientName},
-				{"ward_number", evt.WardNumber},
-				{"patient_age", evt.PatientAge},
-				{"status", "admitted"},
+			_, err := coll.InsertOne(ctx, Patient{
+				ID:         evt.PatientID,
+				Name:       evt.PatientName,
+				WardNumber: evt.WardNumber,
+				Age:        evt.PatientAge,
+				Status:     "admitted",
 			})
 
 			return err

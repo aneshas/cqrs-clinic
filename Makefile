@@ -4,7 +4,7 @@ swag:
 
 .PHONY: docs
 docs:
-	swag init -d ./cmd/clinicapi,./internal/errs,./internal/api
+	swag init -d ./cmd/clinicapi,./internal/errs,./internal/app,./internal/api
 
 .PHONY: sql
 sql:

@@ -22,11 +22,10 @@ func RegisterPatientServer(
 		dischargePatient: dischargePatient,
 	}
 
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.HEAD("/health", s.health)
+	e.GET("/health", s.health)
 
-	e.GET("/health", func(c echo.Context) error {
-		return c.String(http.StatusOK, "OK")
-	})
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	patients := e.Group("/patients")
 
@@ -40,6 +39,10 @@ type PatientServer struct {
 	admitPatient     app.AdmitPatientFunc
 	transferPatient  app.TransferPatientFunc
 	dischargePatient app.DischargePatientFunc
+}
+
+func (s *PatientServer) health(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
 }
 
 // Patient to be admitted

@@ -15,10 +15,7 @@ func RegisterProjectionServer(
 ) {
 	projections := e.Group("/projections")
 
-	projections.POST(
-		"/patient_roster",
-		handler(app.PatientRosterSubscriptions...)(patientRosterProjection),
-	)
+	projections.POST("/patient_roster", handler(app.PatientRosterSubscriptions...)(patientRosterProjection))
 }
 
 func handler(events ...any) func(projection ambar.Projection) echo.HandlerFunc {

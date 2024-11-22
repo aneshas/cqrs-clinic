@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/aneshas/clinic/internal/app"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,15 +29,6 @@ type PatientQueryServer struct {
 	db     *mongo.Database
 }
 
-type patient struct {
-	ID            string  `bson:"patient_id" json:"id"`
-	Name          string  `bson:"patient_name" json:"name"`
-	WardNumber    string  `bson:"ward_number" json:"ward_number"`
-	Age           int     `bson:"patient_age" json:"age"`
-	Status        string  `bson:"status" json:"status"`
-	DischargeNote *string `bson:"discharge_note" json:"discharge_note,omitempty"`
-} // @name Patient
-
 // @Summary Get patient roster
 // @Description Get all patients.
 // @Tags Patients
@@ -54,7 +46,7 @@ func (s *PatientQueryServer) patients(c echo.Context) error {
 		return err
 	}
 
-	results := make([]patient, 0)
+	results := make([]app.Patient, 0)
 
 	err = cursor.All(ctx, &results)
 	if err != nil {
